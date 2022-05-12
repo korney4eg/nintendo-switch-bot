@@ -1,6 +1,6 @@
 # Nintendo Switch bot
 
-Telegram bot for Nintendo Switch eShop.
+Telegram bot for Nintendo Switch eShop in RU or DE regions.
 
 ## Prerequirements
 
