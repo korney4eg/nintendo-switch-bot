@@ -9,8 +9,8 @@ all_games_num = 0
 for i in range(0, 351):
     start_rows=i * ROWS_PER_PAGE
     print('Processing page: '+str(i))
-    url = 'https://searching.nintendo-europe.com/ru/select?' +\
-      'q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22))'+\
+    url = 'https://searching.nintendo-europe.com/ru/' +\
+      'select?q=*&fq=type%3AGAME%20AND%20((playable_on_txt%3A%22HAC%22))'+\
       '%20AND%20sorting_title%3A*%20AND%20*%3A*&sort=deprioritise_b%20asc'+\
       '%2C%20popularity%20asc&start='+str(start_rows)+'&rows=24&wt=json'+\
       '&bf=linear(ms(priority%2CNOW%2FHOUR)%2C3.19e-11%2C0)'+\

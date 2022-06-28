@@ -20,7 +20,7 @@ categories = []
 languages = []
 limit = 1000000
 game_num = 0
-with open('all_games_f.json') as json_file:
+with open('all_games2.json') as json_file:
     json_data = json.load(json_file)
     for game in json_data:
         if game_num > limit:
