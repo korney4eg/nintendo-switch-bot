@@ -66,15 +66,18 @@ func GetUnknowCommand(command string) *Command {
 	}
 }
 
-func GetFollowCommand(cmd string) *Command {
+func GetFollowCommand(cmdLine string) *Command {
 	command := &Command{
-		View: &views.View{},
+		View: &views.View{
+			Text: "empty",
+		},
 		CommandFounded: func(cmd string) bool {
 			return strings.HasPrefix(cmd, "follow_game_")
 		},
 	}
 	command.Process = func(db *storm.DB, cmd string) error {
-		command.SetText(fmt.Sprintf("Processing '%s' ...", cmd))
+		log.Printf("Processing command `%s`", cmd)
+		command.SetText(fmt.Sprintf("Processing `%s` ...", cmd))
 		return nil
 	}
 	return command
@@ -97,26 +100,28 @@ func GetAllGamesCommand() *Command {
 // 	return &Command{}
 // }
 
-func Execute(chatId int64, cmd string, db *storm.DB) (messages []*tgbotapi.MessageConfig) {
-	view := &views.UnknownScreen
-	command := FindCommand(cmd)
-	log.Printf("[INFO] Executing command `%s`\n", cmd)
-	if command.View != nil {
-		view = command.View
-	}
+func Execute(chatId int64, cmd string) (messages []*tgbotapi.MessageConfig) {
+	// view := &views.UnknownScreen
+	// command := FindCommand(cmd)
+	// log.Printf("[INFO] Executing command `%s`\n", cmd)
+	// if command.View != nil {
+	// 	view = command.View
+	// }
+	// command.Process(db, cmd)
+	// log.Println("Processed")
 
-	for {
-		msg := tgbotapi.NewMessage(chatId, "")
-		msg.Text = view.Text
-		msg.ParseMode = tgbotapi.ModeMarkdown
-		msg.DisableWebPagePreview = true
-		messages = append(messages, &msg)
-		if view.NextView != nil {
-			view = view.NextView
-		} else {
-			break
-		}
-	}
+	// for {
+	// 	msg := tgbotapi.NewMessage(chatId, "")
+	// 	msg.Text = view.Text
+	// 	msg.ParseMode = tgbotapi.ModeMarkdown
+	// 	msg.DisableWebPagePreview = true
+	// 	messages = append(messages, &msg)
+	// 	if view.NextView != nil {
+	// 		view = view.NextView
+	// 	} else {
+	// 		break
+	// 	}
+	// }
 	return messages
 }
 

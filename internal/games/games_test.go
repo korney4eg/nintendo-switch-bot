@@ -2,25 +2,15 @@ package games
 
 import "testing"
 
-func TestPagination(t *testing.T) {
-	marioGame1 := NewGame("1", "Mario1")
+func TestGetDifference(t *testing.T) {
 	marioGame2 := NewGame("2", "Mario2")
-	marioGame3 := NewGame("3", "Mario3")
-	marioGame4 := NewGame("4", "Mario4")
-	marioGame5 := NewGame("5", "Mario5")
-	marioGames := []*Game{
-		&marioGame1, &marioGame2,
-		&marioGame3, &marioGame4,
-		&marioGame5,
+	marioGame3 := NewGame("2", "Mario3")
+	marioGame3.PriceSortingF = 20.0
+	differences := marioGame2.GetDifference(&marioGame3)
+	if len(differences) < 1 {
+		t.Error("There should be difference in Price, got no difference")
 	}
-	paginatedMario := Paginate(marioGames, 2)
-	t.Logf("marioGames = %+v", marioGames)
-	if len(paginatedMario.Pages) != 3 {
-		t.Logf("First element of GamesList is '%+v'", paginatedMario.Pages[0])
-		t.Fatalf("paginatedMario expected 3 pages, got %d\n full list = '%+v'", len(paginatedMario.Pages), paginatedMario.Pages)
+	if differences[0].NewValue != float32(20) {
+		t.Errorf("Difference in price should be 20.0, got %f\n", differences[0].NewValue)
 	}
-  if len(paginatedMario.Pages[2]) != 1 {
-    t.Errorf("Last page of Mario Games size supposed to be 1, but got %d\n", len(paginatedMario.Pages[2]))
-
-  }
 }

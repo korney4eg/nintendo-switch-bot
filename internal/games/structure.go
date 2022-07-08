@@ -57,7 +57,7 @@ type Game struct {
 	AgeRatingValue             string      `json:"age_rating_value"`
 	Version                    int64       `json:"_version_"`
 	Popularity                 int         `json:"popularity" storm:"index"`
-	GameCategoriesTxt         []string    `json:"game_categories_txt"`
+	GameCategoriesTxt          []string    `json:"game_categories_txt"`
 	// PrettyGameCategoriesTxt    []string    `json:"pretty_game_categories_txt"`
 	// Type                      string      `json:"type"`
 	// PgS                       string      `json:"pg_s"`
@@ -80,11 +80,27 @@ type Game struct {
 }
 
 type (
+	GameFollow struct {
+		GameId string
+		Users  map[int]*UserFollow
+	}
+	UserFollow struct {
+		Showed bool
+	}
 	GamesList struct {
 		Games []*Game
 	}
 	GamesPagineted interface{}
 	Paginated      struct {
 		Pages [][]*Game
+	}
+	GamesDataInterface interface {
+		GetAll() []*Game
+		GetByID(int) *Game
+	}
+	Difference struct {
+		Field    string
+		OldValue interface{}
+		NewValue interface{}
 	}
 )

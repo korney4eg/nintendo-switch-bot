@@ -111,7 +111,7 @@ func MainLoop() {
 			// AllCommands := &commands.CommandsList{Commands: []*commands.Command{&commands.StartCommand, &commands.HelpCommand, commands.GetAllGamesCommand()}}
 			// command := AllCommands.FindCommand(update.Message.Command(), db)
 			// log.Infof("got command: %s", command.View.Text)
-			messages := commands.Execute(update.Message.Chat.ID, update.Message.Command(), db)
+			messages := commands.Execute(update.Message.Chat.ID, update.Message.Command())
 
 			for _, message := range messages {
 				if msg, err := bot.Send(message); err != nil {

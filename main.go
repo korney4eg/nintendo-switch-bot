@@ -1,12 +1,11 @@
+/*
+Copyright © 2022 NAME HERE <EMAIL ADDRESS>
+
+*/
 package main
 
-import (
-	"fmt"
-
-	"github.com/korney4eg/nintendo-switch-bot/internal/telegram"
-)
+import "github.com/korney4eg/nintendo-switch-bot/cmd"
 
 func main() {
-	fmt.Println("Starting main loop")
-	telegram.MainLoop()
+	cmd.Execute()
 }
