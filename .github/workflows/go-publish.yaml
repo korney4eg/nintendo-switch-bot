@@ -60,4 +60,4 @@ jobs:
         uses: docker/build-push-action@v3
         with:
           push: true
-          tags: aliakseikarneyeu/nintendo-switch-bot:${{ github.ref }}
+          tags: registry.hub.docker.com/aliakseikarneyeu/nintendo-switch-bot:${{ github.ref }}
