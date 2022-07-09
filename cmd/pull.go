@@ -31,12 +31,14 @@ var pullCmd = &cobra.Command{
 var (
 	startPageNum int
 	gamesPerPage int
+	dataFile     string
 )
 
 func init() {
 	rootCmd.AddCommand(pullCmd)
 	pullCmd.Flags().IntVarP(&startPageNum, "page", "p", 1, "Page number to pull data from. Data from that single page would be pulled")
 	pullCmd.Flags().IntVarP(&gamesPerPage, "rows", "r", 100, "Rows per page to download")
+	pullCmd.Flags().StringVarP(&dataFile, "data", "d", "games.json", "path to json file with games data")
 }
 
 const (
@@ -76,7 +78,7 @@ func downloadGames(host string) error {
 	GameStore := &games.GameStoreLocal{}
 	pageNum := startPageNum
 	gameNum := 0
-	GameStore.LoadFromFile("games.json")
+	GameStore.LoadFromFile(dataFile)
 	var nintendoResp *games.NintendoResponce
 	for {
 		page, err := GetEShopPage(host, pageNum*gamesPerPage, gamesPerPage)
@@ -104,7 +106,7 @@ func downloadGames(host string) error {
 		pageNum++
 	}
 	log.Printf("Checked %d games\n", gameNum)
-	if err := GameStore.SaveToFile("games.json"); err != nil {
+	if err := GameStore.SaveToFile(dataFile); err != nil {
 		return err
 	}
 	return nil
