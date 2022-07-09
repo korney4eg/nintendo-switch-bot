@@ -43,6 +43,9 @@ jobs:
       #     asset_path: ./nintendo-switch-bot
       #     asset_name: nintendo-switch-bot
       #     asset_content_type: application/octet-stream
+      - name: Get the version
+        id: get_version
+        run: echo ::set-output name=VERSION::${GITHUB_REF#refs/tags/}
       -
         name: Set up QEMU
         uses: docker/setup-qemu-action@v2
@@ -63,4 +66,4 @@ jobs:
           context: .
           platforms: linux/amd64,linux/arm64
           push: true
-          tags: ghcr.io/korney4eg/nintendo-switch-bot:${{ github.ref }}
+          tags: ghcr.io/korney4eg/nintendo-switch-bot:${{ steps.get_version.outputs.VERSION }}
