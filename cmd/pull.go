@@ -28,14 +28,20 @@ var pullCmd = &cobra.Command{
 	},
 }
 
+var (
+	startPageNum int
+	gamesPerPage int
+)
+
 func init() {
 	rootCmd.AddCommand(pullCmd)
+	pullCmd.Flags().IntVarP(&startPageNum, "page", "p", 1, "Page number to pull data from. Data from that single page would be pulled")
+	pullCmd.Flags().IntVarP(&gamesPerPage, "rows", "r", 100, "Rows per page to download")
 }
 
 const (
-	host         = "https://searching.nintendo-europe.com/ru/"
-	gamesPerPage = 100
-	searchPath   = "select?q=*&fq=type%%3AGAME%%20AND%%20((playable_on_txt%%3A%%22HAC%%22))" +
+	host       = "https://searching.nintendo-europe.com/ru/"
+	searchPath = "select?q=*&fq=type%%3AGAME%%20AND%%20((playable_on_txt%%3A%%22HAC%%22))" +
 		"%%20AND%%20sorting_title%%3A*%%20AND%%20*%%3A*&sort=deprioritise_b%%20asc" +
 		"%%2C%%20popularity%%20asc&start=%d&rows=%d&wt=json" +
 		"&bf=linear(ms(priority%%2CNOW%%2FHOUR)%%2C3.19e-11%%2C0)" +
@@ -68,7 +74,7 @@ func downloadGames(host string) error {
 	// 3. Page processor
 
 	GameStore := &games.GameStoreLocal{}
-	pageNum := 0
+	pageNum := startPageNum
 	gameNum := 0
 	GameStore.LoadFromFile("games.json")
 	var nintendoResp *games.NintendoResponce
@@ -85,15 +91,19 @@ func downloadGames(host string) error {
 		for _, game := range nintendoResp.Response.Docs {
 			gameNum++
 			if !GameStore.HasGame(game) {
-				log.Printf("[INFO] %d. (%s) %s\n", gameNum, game.FsID, game.Title)
+				log.Printf("[INFO] %d. Adding (%s) %s\n", gameNum, game.FsID, game.Title)
 				GameStore.AddGame(game)
 			}
 		}
 		if nintendoResp.Response.NumFound <= pageNum*gamesPerPage {
 			break
 		}
+		if startPageNum != 1 {
+			break
+		}
 		pageNum++
 	}
+	log.Printf("Checked %d games\n", gameNum)
 	if err := GameStore.SaveToFile("games.json"); err != nil {
 		return err
 	}
