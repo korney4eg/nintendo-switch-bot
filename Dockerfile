@@ -10,7 +10,7 @@ RUN go build -o /go/bin/nintendo-switch-bot
 
 FROM alpine:latest
 # Copy our static executable.
-RUN apk update && apk add --no-cache cron
+RUN apk update && apk add --no-cache apk-cron
 COPY --from=builder /go/bin/nintendo-switch-bot /usr/local/bin/
 WORKDIR /app
 CMD ["nintendo-switch-bot"]
