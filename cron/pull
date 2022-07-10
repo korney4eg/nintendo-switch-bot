@@ -1,0 +1,2 @@
+# Run every night at 3:05 AM
+5 3 * * * nintendo-switch-bot pull -p 10 -r 15 -d /app/data/games.json
