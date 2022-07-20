@@ -4,11 +4,12 @@ import (
 	"encoding/json"
 	"fmt"
 	"io/ioutil"
+	"sort"
 	// "log"
 )
 
 type GameStoreLocal struct {
-	Games map[string]*Game
+	Games map[GameID]*Game
 }
 
 func (gameStore *GameStoreLocal) SaveToFile(fileName string) error {
@@ -17,6 +18,21 @@ func (gameStore *GameStoreLocal) SaveToFile(fileName string) error {
 		return err
 	}
 	err = ioutil.WriteFile(fileName, file, 0o644)
+	return err
+}
+
+func (gameStore *GameStoreLocal) SaveIDsToFile(fileName string) error {
+	games := []GameID{}
+	for gameID := range gameStore.Games {
+		games = append(games, gameID)
+	}
+	sort.Sort(ByID(games))
+	gamesString := ""
+	for _, game := range games {
+		gamesString += fmt.Sprintf("%s\n", game)
+	}
+
+  err := ioutil.WriteFile(fileName, []byte(gamesString), 0o644)
 	return err
 }
 
@@ -59,7 +75,7 @@ func PrintIds(g map[string]*Game) string {
 
 func (gameStore *GameStoreLocal) AddGame(game *Game) {
 	if len(gameStore.Games) == 0 {
-		gameStore.Games = make(map[string]*Game)
+		gameStore.Games = make(map[GameID]*Game)
 	}
 	if gameStore.Games[game.FsID] == nil {
 		// log.Println(game.Title)
@@ -71,6 +87,6 @@ func (gameStore *GameStoreLocal) HasGame(game *Game) bool {
 	return gameStore.Games[game.FsID] != nil
 }
 
-func (gameStore *GameStoreLocal) FindGame(gameId string) (game *Game) {
+func (gameStore *GameStoreLocal) FindGame(gameId GameID) (game *Game) {
 	return gameStore.Games[gameId]
 }

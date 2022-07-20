@@ -24,8 +24,10 @@ type NintendoResponce struct {
 	} `json:"response"`
 }
 
+type GameID string
+
 type Game struct {
-	FsID                       string      `json:"fs_id" storm:"id"`
+	FsID                       GameID      `json:"fs_id" storm:"id"`
 	ChangeDate                 time.Time   `json:"change_date" storm:"index"`
 	URL                        string      `json:"url"`
 	DatesReleasedDts           []time.Time `json:"dates_released_dts" storm:"index"`

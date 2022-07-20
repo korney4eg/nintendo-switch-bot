@@ -11,6 +11,7 @@ import (
 	"io"
 	"log"
 	"net/http"
+	"time"
 
 	"github.com/korney4eg/nintendo-switch-bot/internal/games"
 	"github.com/spf13/cobra"
@@ -107,6 +108,10 @@ func downloadGames(host string) error {
 	}
 	log.Printf("Checked %d games\n", gameNum)
 	if err := GameStore.SaveToFile(dataFile); err != nil {
+		return err
+	}
+	t := time.Now()
+	if err := GameStore.SaveIDsToFile(t.Format("20060102-150405")); err != nil {
 		return err
 	}
 	return nil
