@@ -111,7 +111,7 @@ func downloadGames(host string) error {
 		return err
 	}
 	t := time.Now()
-	if err := GameStore.SaveIDsToFile(t.Format("20060102-150405")); err != nil {
+	if err := GameStore.SaveIDsToFile("data/"+t.Format("20060102-150405")); err != nil {
 		return err
 	}
 	return nil
