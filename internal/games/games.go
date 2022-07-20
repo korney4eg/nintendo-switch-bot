@@ -29,8 +29,14 @@ func LoadGamesFromFile(fileName string) (games []*Game, err error) {
 	return games, err
 }
 
-func NewGame(id, title string) (game Game) {
+func NewGame(id GameID, title string) (game Game) {
 	game.FsID = id
 	game.Title = title
 	return game
 }
+
+type ByID []GameID
+
+func (a ByID) Len() int           { return len(a) }
+func (a ByID) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
+func (a ByID) Less(i, j int) bool { return a[i] < a[j] }
