@@ -1,2 +1,5 @@
 all_games.json
 all_games_f.json
+data/*
+.env
+nintendo-switch-bot
