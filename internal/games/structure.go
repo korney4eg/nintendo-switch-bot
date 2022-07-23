@@ -24,8 +24,6 @@ type NintendoResponce struct {
 	} `json:"response"`
 }
 
-type GameID string
-
 type Game struct {
 	FsID                       GameID      `json:"fs_id" storm:"id"`
 	ChangeDate                 time.Time   `json:"change_date" storm:"index"`

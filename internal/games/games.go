@@ -34,9 +34,3 @@ func NewGame(id GameID, title string) (game Game) {
 	game.Title = title
 	return game
 }
-
-type ByID []GameID
-
-func (a ByID) Len() int           { return len(a) }
-func (a ByID) Swap(i, j int)      { a[i], a[j] = a[j], a[i] }
-func (a ByID) Less(i, j int) bool { return a[i] < a[j] }

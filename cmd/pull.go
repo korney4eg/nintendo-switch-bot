@@ -11,7 +11,6 @@ import (
 	"io"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/korney4eg/nintendo-switch-bot/internal/games"
 	"github.com/spf13/cobra"
@@ -33,13 +32,15 @@ var (
 	startPageNum int
 	gamesPerPage int
 	dataFile     string
+	idsFile      string
 )
 
 func init() {
 	rootCmd.AddCommand(pullCmd)
 	pullCmd.Flags().IntVarP(&startPageNum, "page", "p", 1, "Page number to pull data from. Data from that single page would be pulled")
 	pullCmd.Flags().IntVarP(&gamesPerPage, "rows", "r", 100, "Rows per page to download")
-	pullCmd.Flags().StringVarP(&dataFile, "data", "d", "games.json", "path to json file with games data")
+	pullCmd.Flags().StringVarP(&dataFile, "data", "d", "data/games.json", "path to json file with games data")
+	pullCmd.Flags().StringVarP(&idsFile, "ids-file", "i", "data/ids", "path to file with games ids")
 }
 
 const (
@@ -78,7 +79,7 @@ func downloadGames(host string) error {
 
 	GameStore := &games.GameStoreLocal{}
 	pageNum := startPageNum
-	gameNum := 0
+	checkedGames := []games.GameID{}
 	GameStore.LoadFromFile(dataFile)
 	var nintendoResp *games.NintendoResponce
 	for {
@@ -92,9 +93,9 @@ func downloadGames(host string) error {
 
 		}
 		for _, game := range nintendoResp.Response.Docs {
-			gameNum++
+			checkedGames = append(checkedGames, game.FsID)
 			if !GameStore.HasGame(game) {
-				log.Printf("[INFO] %d. Adding (%s) %s\n", gameNum, game.FsID, game.Title)
+				log.Printf("[INFO] %d. Adding (%s) %s\n", len(checkedGames), game.FsID, game.Title)
 				GameStore.AddGame(game)
 			}
 		}
@@ -106,12 +107,30 @@ func downloadGames(host string) error {
 		}
 		pageNum++
 	}
-	log.Printf("Checked %d games\n", gameNum)
+	log.Printf("Checked %d games\n", len(checkedGames))
 	if err := GameStore.SaveToFile(dataFile); err != nil {
 		return err
 	}
-	t := time.Now()
-	if err := GameStore.SaveIDsToFile("data/"+t.Format("20060102-150405")); err != nil {
+	firstRun := false
+	previouslyCheckedGames, err := games.ReadGameIDsFromFile(idsFile)
+	if err != nil {
+		log.Printf("[ERROR] couldn't open file: %s\n", idsFile)
+		firstRun = true
+	}
+	if !firstRun {
+		gameIDsDifference := games.GetGameIDsDiff(checkedGames, previouslyCheckedGames)
+		log.Println("Added game ids:")
+		for _, gameID := range gameIDsDifference {
+			log.Printf("- %s\n", gameID)
+		}
+		gameIDsDifference = games.GetGameIDsDiff(previouslyCheckedGames, checkedGames)
+		log.Println("Removed game ids:")
+		for _, gameID := range gameIDsDifference {
+			log.Printf("- %s\n", gameID)
+		}
+	}
+	if err := games.WriteGameIDsToFile(checkedGames, idsFile); err != nil {
+		log.Printf("[ERROR] couldn't save file: %s\n", idsFile)
 		return err
 	}
 	return nil
